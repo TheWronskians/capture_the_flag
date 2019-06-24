@@ -1,0 +1,371 @@
+#LyX 2.2 created this file. For more info see http://www.lyx.org/
+\lyxformat 508
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Computer Networks - Prime Number Project
+\end_layout
+
+\begin_layout Author
+Group M:
+\begin_inset Newline newline
+\end_inset
+
+Devon Jarvis - 1365149
+\begin_inset Newline newline
+\end_inset
+
+Jiahao Huo - 1475365
+\begin_inset Newline newline
+\end_inset
+
+Kyle Rip - 1076026
+\begin_inset Newline newline
+\end_inset
+
+Meir Rosendorff - 1490527
+\begin_inset Newline newline
+\end_inset
+
+Or Hanoch - 1501858
+\end_layout
+
+\begin_layout Part
+Introduction
+\end_layout
+
+\begin_layout Standard
+The objective of this project was to create a client-server enviroment that
+ will recieve a range of natural numbers and return the amount of prime
+ numbers within that set.
+ The enviroment consists of 1 client and 3 servers.
+\begin_inset Newline newline
+\end_inset
+
+This project has been programmed in python and uses the socket and pickle
+ libraries.
+\end_layout
+
+\begin_layout Section
+Input and Outputs
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Input:
+\series default
+ Lower bound of the set (int) and Upper bound of the set (int)
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+Output:
+\series default
+ Amount of prime numbers in the set (int)
+\end_layout
+
+\begin_layout Section
+Files
+\end_layout
+
+\begin_layout Itemize
+TCPClient.py - Runs the client
+\end_layout
+
+\begin_layout Itemize
+TCPServer1.py - Runs server no.
+ 1
+\end_layout
+
+\begin_layout Itemize
+TCPServer2.py - Runs server no.
+ 2
+\end_layout
+
+\begin_layout Itemize
+TCPServer3.py - Runs server no.
+ 3
+\end_layout
+
+\begin_layout Itemize
+primeCalc.py - Contains the methods countPrimes and checkingPrime, called
+ from the servers.
+\end_layout
+
+\begin_layout Subsection
+TCPClient.py
+\end_layout
+
+\begin_layout Standard
+Runs the client and performs the following:
+\end_layout
+
+\begin_layout Enumerate
+Initializes three separate TCP, IPv4 sockets and sends connection request
+ to three different servers.
+ 
+\end_layout
+
+\begin_layout Enumerate
+Requests input of lower and upper bound limits for the range that will be
+ analysed.
+\end_layout
+
+\begin_layout Enumerate
+Splits the range given into three equal sections and creates arrays with
+ specifying them.
+\end_layout
+
+\begin_layout Enumerate
+Starts a timer that will count the amount of time it takes to perform calculatio
+ns.
+\end_layout
+
+\begin_layout Enumerate
+Using 
+\begin_inset Quotes eld
+\end_inset
+
+pickle
+\begin_inset Quotes erd
+\end_inset
+
+ library sends the each section array to a different server to be analysed.
+\end_layout
+
+\begin_layout Enumerate
+Using 
+\begin_inset Quotes eld
+\end_inset
+
+pickle
+\begin_inset Quotes erd
+\end_inset
+
+ library recieve results from servers.
+\end_layout
+
+\begin_layout Enumerate
+Stop timer.
+\end_layout
+
+\begin_layout Enumerate
+Print output of amount of primes in each section and time it took, aswell
+ as the total result of the entire range and time it took.
+\end_layout
+
+\begin_layout Standard
+
+\bar under
+Note:
+\bar default
+ We first send data to all servers and then recieve data from server (as
+ opposed to sending and recieving to one server at a time) in order to have
+ the calculations run in overlapping time periods on all servers, thus utilizing
+ the maximum amount of hardware at any given time, making the complete calculati
+on faster.
+\end_layout
+
+\begin_layout Subsection
+TCPServer#.py
+\end_layout
+
+\begin_layout Standard
+Runs a server and performs the following:
+\end_layout
+
+\begin_layout Enumerate
+Initializes TCP, IPv4 socket and accepts a connection from a client.
+\end_layout
+
+\begin_layout Enumerate
+Recieves (using 
+\begin_inset Quotes eld
+\end_inset
+
+pickle library
+\begin_inset Quotes erd
+\end_inset
+
+) array with range of numbers to be analyzed.
+\end_layout
+
+\begin_layout Enumerate
+Sends the range to countPrimes in primeCalc.py and gets response of amount
+ of primes in range and how much time it took.
+\end_layout
+
+\begin_layout Enumerate
+Sends results back to client.
+\end_layout
+
+\begin_layout Subsection
+primeCalc.py
+\end_layout
+
+\begin_layout Standard
+This file consists of two functions: checkingPrime and countPrimes.
+\end_layout
+
+\begin_layout Subsubsection
+checkingPrime
+\end_layout
+
+\begin_layout Standard
+Checks if a given number is a prime number.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+Uses algorithem found in Project Euler Problem 7: https://projecteuler.net/overvi
+ew=007 
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+Input: 
+\series default
+int - an integer to be checked if it is a prime.
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+Output:
+\series default
+ boolean - a true or false value of whether the input is or isn't a prime.
+\end_layout
+
+\begin_layout Subsubsection
+countPrimes
+\end_layout
+
+\begin_layout Standard
+Goes over a range of integers and checks how many primes are in that range
+ and the amount of times it takes to calculate it.
+ Uses checkingPrime to evaluate whether an integer in the range is a prime.
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+Input:
+\series default
+ int,int - lower bound of range, upper bound of range.
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+Output:
+\series default
+ int, time - amount of primes in range, amount of time calculation took.
+\end_layout
+
+\begin_layout Section
+Project Member Roles
+\end_layout
+
+\begin_layout Standard
+Devon Jarvis - Research, Structuring, Overviewing and Writing Code 
+\begin_inset Newline newline
+\end_inset
+
+Jiahao Huo - Research, Structering, Overviewing and Writing Code
+\begin_inset Newline newline
+\end_inset
+
+Kyle Rip - Research, Overviewing, Reformating
+\begin_inset Newline newline
+\end_inset
+
+Meir Rosendorff - Research, Structuring, Debuging & Optimizing, Overviewing,
+ and Documentation
+\begin_inset Newline newline
+\end_inset
+
+Or Hanoch - Research, Structuring, Overviewing and Writing Code and Documentatio
+n
+\end_layout
+
+\end_body
+\end_document
