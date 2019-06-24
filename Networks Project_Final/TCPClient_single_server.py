@@ -3,7 +3,7 @@ import pickle
 import time
 
 clientSockets= socket(AF_INET, SOCK_STREAM)
-serverNames = "192.168.8.109"
+serverNames = "127.0.0.1"
 
 
 
@@ -25,8 +25,8 @@ def sendToServer(limitSet): #Looping through servers and
 def sendToServerString(string): #Looping through servers and
 	                           #sending the search limits 'range' to servers.
 
-	print("Sending string: " + string)
-	# data_numbers = pickle.dumps(string)
+	print("Sending string: " + str(string))
+	data_numbers = pickle.dumps(string)
 	clientSockets.send(data_numbers)
 
 
@@ -48,31 +48,33 @@ def closeConnections(): #Closing connections to different servers.
 if __name__ == "__main__":#Main function
 
 	createConnections()	#Creates three connections to servers
+	for i in range(10):
+		#createConnections()	#Creates three connections to servers
+		lLimit = input("input lower limit ")
+		uLimit = input("input upper limit ")
+		#string = input("Enter the string you wish to send\n")
+		print ("\n")
+		limitSet = []
+		startTime=time.time() #Start of connection time
 
-	# lLimit = input("input lower limit ")
-	# uLimit = input("input upper limit ")
-	string = input("Enter the string you wish to send")
-	print ("\n")
+		limitSet = [lLimit,uLimit] #Breaking range into sets
 
-	startTime=time.time() #Start of connection time
+		sendToServer(limitSet) #Sending sets to servers
 
-	# limitSet = [lLimit,uLimit] #Breaking range into sets
+		results, times = getReplies() #Getting results and search times
+		#replyAnswerSerialized = clientSockets.recv(1024)
+		#replyAnswerDeserialized = pickle.loads(replyAnswerSerialized)
+		#print(replyAnswerDeserialized)
+		elapsedTime = time.time() - startTime
 
-	sendToServer(string) #Sending sets to servers
+		totalResults = 0
+		totalTime = 0
 
-	results, times = getReplies() #Getting results and search times
+		print ("got reply = " + str(results) + " from host " +str(serverNames)+ " after " +str(times)+ " seconds")
+		totalResults = totalResults + results
+		totalTime = totalTime + times
 
-	elapsedTime = time.time() - startTime
-
-	totalResults = 0
-	totalTime = 0
-
-	print ("got reply = " + str(results) + " from host " +str(serverNames)+ " after " +str(times)+ " seconds")
-	totalResults = totalResults + results
-	totalTime = totalTime + times
-
-	print "answer is " + str(totalResults) #Total prime nos from each server
-	print "Total time elapsed " +str(elapsedTime) #Time after each result has been returned
-	print "Total time elapsed on all servers combined " + str(totalTime)#Total time taken for each server combined
-
+		print "answer is " + str(totalResults) #Total prime nos from each server
+		print "Total time elapsed " +str(elapsedTime) #Time after each result has been returned
+		print "Total time elapsed on all servers combined " + str(totalTime)#Total time taken for each server combined
 	closeConnections() #Closing all connections to servers.

@@ -28,6 +28,9 @@ def setLimits(lLimit, uLimit): #Settting prime no. search ranges.
 	return [set1, set2, set3]
 
 
+def sendCommandToServers(tempstring):
+	
+
 def sendRangesToServers(limitSet): #Looping through servers and
 	                           #sending the search limits 'range' to servers.
 	for i in range(len(clientSockets)):
