@@ -50,15 +50,21 @@ if __name__ == "__main__":#Main function
 	createConnections()	#Creates three connections to servers
 	for i in range(10):
 		#createConnections()	#Creates three connections to servers
-		lLimit = input("input lower limit ")
-		uLimit = input("input upper limit ")
+		# lLimit = input("input lower limit ")
+		# uLimit = input("input upper limit ")
+		x = input("x ")
+		y = input("y ")
+		z = input("z ")
+		ax = input("ax ")
+		ay = input("ay ")
+		az = input("az ")
 		#string = input("Enter the string you wish to send\n")
 		print ("\n")
 		limitSet = []
 		startTime=time.time() #Start of connection time
 
-		limitSet = [lLimit,uLimit] #Breaking range into sets
-
+		# limitSet = [lLimit,uLimit] #Breaking range into sets
+		limitSet = [x, y, z, ax, ay, az]
 		sendToServer(limitSet) #Sending sets to servers
 
 		results, times = getReplies() #Getting results and search times

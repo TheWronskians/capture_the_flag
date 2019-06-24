@@ -15,11 +15,14 @@ def move(x, y, z, ax, ay, az):
 
     print("Moving turtlebot")
 
-    velocity_msg.linear.x = 0.3
+    # velocity_msg.linear.x = 0.3
+    velocity_msg.linear.x = x
+
 
     while not rospy.is_shutdown():
         # moving forward for at 0.3 speed for 5 seconds
-        velocity_msg.linear.x = 0.3
+        # velocity_msg.linear.x = 0.3
+        velocity_msg.linear.x = x
         time_end = time.time() + 5
         while(time.time() < time_end):
             velocity_publisher.publish(velocity_msg)
@@ -28,7 +31,8 @@ def move(x, y, z, ax, ay, az):
         velocity_publisher.publish(velocity_msg)
 
         # rotating at 0.1 for 1 second
-        velocity_msg.angular.x = 0.1
+        # velocity_msg.angular.x = 0.1
+        velocity_msg.angular.x = ax
         time_end = time.time() + 1
         while(time.time() < time_end):
             velocity_publisher.publish(velocity_msg)
@@ -37,7 +41,8 @@ def move(x, y, z, ax, ay, az):
         velocity_publisher.publish(velocity_msg)
 
         # moving forware again at 0.2 speed for 5 seconds
-        velocity_msg.linear.x = 0.2
+        # velocity_msg.linear.x = 0.2
+        velocity_msg.linear.x = x - 0.1
         time_end = time.time() + 5
         while(time.time() < time_end):
             velocity_publisher.publish(velocity_msg)
@@ -55,17 +60,17 @@ if __name__ == '__main__':
     serverSocket.listen(1)
     print("The server is ready to receive")
     while 1:
-    	connectionSocket, addr = serverSocket.accept() #connecting to
-    	while True:
-    		pickledLimits = connectionSocket.recv(1024)#Recieve data in Pickle form.
-    		limits = pickle.loads(pickledLimits)#Convert data to array
-    		num , t = countPrimes(limits[0],limits[1])
-            # getting the x, y, z, ax, ay, az from the camera
-            # x, y, z, ax, ay, az = limits
-            # try:
-                # sending these limits to the move function
-                # move(x, y, z, ax, ay, az)
-            # except rospy.ROSInterruptException: pass
-    		toSend = [num, t] #Preparing data to be sent
-    		connectionSocket.send(pickle.dumps(toSend)) #Converting to Pickle form and sending
-    	connectionSocket.close()#Closing connections.
+        connectionSocket, addr = serverSocket.accept() #connecting to
+        while True:
+            pickledLimits = connectionSocket.recv(1024)#Recieve data in Pickle form.
+            limits = pickle.loads(pickledLimits)
+            x, y, z, ax, ay, az = limits
+            try:
+                move(x, y, z, ax, ay, az)
+                toSend = [1, 21]
+                connectionSocket.send(pickle.dumps(toSend))
+            except rospy.ROSInterruptException: pass
+            # num , t = countPrimes(limits[0],limits[1])
+            # toSend = [1, 21] #Preparing data to be sent
+            # connectionSocket.send(pickle.dumps(toSend)) #Converting to Pickle form and sending
+        connectionSocket.close()#Closing connections.
