@@ -1,0 +1,2 @@
+turtle_pkg
+-DCATKIN_DEVEL_PREFIX=/home/rylan/Desktop/capture_the_flag/turtlebot_ws/devel -DCMAKE_INSTALL_PREFIX=/home/rylan/Desktop/capture_the_flag/turtlebot_ws/install -G Unix Makefiles

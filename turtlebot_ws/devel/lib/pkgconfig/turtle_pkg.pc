@@ -1,0 +1,8 @@
+prefix=/home/rylan/Desktop/capture_the_flag/turtlebot_ws/devel
+
+Name: turtle_pkg
+Description: Description of turtle_pkg
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/rylan/Desktop/capture_the_flag/turtlebot_ws/devel/lib 
+Requires: 
