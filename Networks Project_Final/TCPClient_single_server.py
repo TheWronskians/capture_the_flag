@@ -22,6 +22,13 @@ def sendToServer(limitSet): #Looping through servers and
 	data_numbers = pickle.dumps(limitSet)
 	clientSockets.send(data_numbers)
 
+def sendToServerString(string): #Looping through servers and
+	                           #sending the search limits 'range' to servers.
+
+	print("Sending string: " + string)
+	# data_numbers = pickle.dumps(string)
+	clientSockets.send(data_numbers)
+
 
 def getReplies(): #Getting replies from servers.
 
@@ -38,24 +45,20 @@ def closeConnections(): #Closing connections to different servers.
 
 	clientSockets.close()
 
-
-
-
-
-
 if __name__ == "__main__":#Main function
 
 	createConnections()	#Creates three connections to servers
 
-	lLimit = input("input lower limit ")
-	uLimit = input("input upper limit ")
+	# lLimit = input("input lower limit ")
+	# uLimit = input("input upper limit ")
+	string = input("Enter the string you wish to send")
 	print ("\n")
 
 	startTime=time.time() #Start of connection time
 
-	limitSet = [lLimit,uLimit] #Breaking range into sets
+	# limitSet = [lLimit,uLimit] #Breaking range into sets
 
-	sendToServer(limitSet) #Sending sets to servers
+	sendToServer(string) #Sending sets to servers
 
 	results, times = getReplies() #Getting results and search times
 
