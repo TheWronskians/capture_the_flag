@@ -8,7 +8,11 @@ def getAngle(start,front,goal):
     a = goal
     c = front
     ang = math.atan2(c.y-b.y, c.x-b.x) - math.atan2(a.y-b.y, a.x-b.x)
-    return -ang
+    if ang<-math.pi:
+        ang+=2*math.pi
+    elif ang>math.pi:
+        ang-=2*math.pi
+    return ang
 
 def drawScene(start,front,goal):
     sfx = [start.x,front.x]
@@ -20,7 +24,7 @@ def drawScene(start,front,goal):
 
 def turnToGoal(start,front,goal,kp,ki,I):
     angle = getAngle(start,front,goal)
-    turnVel = kp*angle #P control
+    turnVel = -kp*angle #P control
     print(math.degrees(angle),turnVel)
     I += ki*np.abs(angle) #I Control
     #turnVel += I
@@ -50,8 +54,8 @@ if __name__ == "__main__":
         turnVel,I = turnToGoal(start,front,next,kp,0.001,I)
         if np.abs(turnVel)<kp*0.05:
             break
-        newFx = start.x-np.cos(turnVel)
-        newFy = start.y-np.sin(turnVel)
+        newFx = start.x-2*np.cos(turnVel)
+        newFy = start.y-2*np.sin(turnVel)
         front = Node(newFx,newFy,0)
     print("Angle = ",getAngle(start,front,next))
     plt.show()
