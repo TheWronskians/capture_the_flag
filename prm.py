@@ -74,7 +74,7 @@ def printAdjacency(adjacency):
                 text += str(int(adjacency[r,c]))+"  "
         print(text)
 
-def drawGraph(graph,enemy,ball,adjust=2,path=None):
+def drawGraph(graph,enemy,ball,adjust=2,path=None,extras=None):
     gr = nx.Graph()
     pos = {}
     for i in range(graph.adjacency.shape[0]-adjust):
@@ -88,10 +88,11 @@ def drawGraph(graph,enemy,ball,adjust=2,path=None):
     labels = nx.get_edge_attributes(gr,'weight')
     nx.draw_networkx_edge_labels(gr,pos,edge_labels=labels)
     if adjust==0:
+        pointRadius = 1000
         start = graph.V[graph.adjacency.shape[0]-2]
         goal = graph.V[graph.adjacency.shape[0]-1]
-        plt.scatter(start.x,start.y,s=600,c='red')
-        plt.scatter(goal.x,goal.y,s=600,c='cyan')
+        plt.scatter(start.x,start.y,s=pointRadius,c='red')
+        plt.scatter(goal.x,goal.y,s=pointRadius,c='cyan')
 
     #Draw Path
     if path is not None:
@@ -115,6 +116,13 @@ def drawGraph(graph,enemy,ball,adjust=2,path=None):
         plt.plot(tbX,tbY,linewidth=2,c='purple')
         plt.plot(lrX,lrY,linewidth=2,c='purple')
         plt.scatter(obstacle.x,obstacle.y,s=500,c='purple')
+
+    if extras is not None:
+        cs = ['yellow','orange']
+        i = 0
+        for ex in extras:
+            plt.scatter(ex.x,ex.y,s=500,c=cs[i])
+            i = (i+1)%2
 
     plt.axis("off")
     plt.show()
@@ -230,13 +238,16 @@ if __name__ == "__main__":
     w = 100
     h = 100
     graph = initGraph(N,w,h,wallPad,k)
-    start = Node(30,40,N)
-    goal = Node(70,60,N+1)
-    enemy = Obstacle(50,50,10)
-    ball = Obstacle(70,70,5)
+    start = Node(np.random.randint(0,w-wallPad),np.random.randint(0,h-wallPad),N)
+    goal = Node(np.random.randint(0,w-wallPad),np.random.randint(0,h-wallPad),N+1)
+    enemy = Obstacle(np.random.randint(0,w-wallPad),np.random.randint(0,h-wallPad),10)
+    ball = Obstacle(np.random.randint(0,w-wallPad),np.random.randint(0,h-wallPad),5)
+    x,y = pathPlan(graph,start,goal,enemy,ball,k,True,draw=True)
+    '''
     while True:
         x,y = pathPlan(graph,start,goal,enemy,ball,k,True)
         print(x,y)
         start = Node(x,y,N)
         goal = Node(np.random.randint(0,w),np.random.randint(0,h),N+1)
         enemy = Obstacle(np.random.randint(0,w),np.random.randint(0,h),10)
+        '''
