@@ -14,6 +14,9 @@ def getAngle(start,front,goal):
         ang-=2*math.pi
     return ang
 
+def dist(a,b):
+    return np.sqrt((a.x-b.x)**2 + (a.y-b.y)**2)
+
 def drawScene(start,front,goal):
     sfx = [start.x,front.x]
     sfy = [start.y,front.y]
@@ -29,12 +32,29 @@ def turnToGoal(angle,start,front,goal,kp,ki=0):
     #turnVel += I
     return turnVel
 
-def PID_Angle(start,front,goal,kp=0.5,tol=0.5):
+def PID_Angle(start,front,goal,kp,ki,kd,I,last,tol):
     angle = getAngle(start,front,goal)
-    if np.abs(angle)<tol:
-        return 0
+    I += angle
+    D = angle-last
+    #print(angle)
+    if np.abs(angle-math.pi)<tol:
+        return 0,angle
     else:
-        return -kp*angle
+        turn = kp*angle + ki*I + kd*D
+        return turn,angle
+
+def PID_Linear(start,goal,kp,ki,kd,I,last,tol):
+    d = dist(start,goal)
+    I += d
+    D = d-last
+    #print(angle)
+    if np.abs(d)<tol:
+        return 0,d
+    else:
+        velocity = kp*d + ki*I + kd*D
+        return velocity,d
+
+
 
 if __name__ == "__main__":
     N = 10

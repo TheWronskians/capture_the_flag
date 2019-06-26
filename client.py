@@ -19,7 +19,7 @@ def sendToServer(limitSet): #Looping through servers and
 	                           #sending the search limits 'range' to servers.
 
 	print ("sending range " + str(limitSet) +" to host " + str(serverNames))
-	data_numbers = pickle.dumps(limitSet)
+	data_numbers = pickle.dumps(limitSet,protocol=2)
 	clientSockets.send(data_numbers)
 
 def sendToServerString(string): #Looping through servers and
