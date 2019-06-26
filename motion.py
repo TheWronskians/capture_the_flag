@@ -22,14 +22,19 @@ def drawScene(start,front,goal):
     plt.plot(sfx,sfy,c='green')
     plt.plot(sgx,sgy,c='red')
 
-def turnToGoal(start,front,goal,kp,ki,I):
-    angle = getAngle(start,front,goal)
+def turnToGoal(angle,start,front,goal,kp,ki=0):
     turnVel = -kp*angle #P control
     print(math.degrees(angle),turnVel)
     I += ki*np.abs(angle) #I Control
     #turnVel += I
-    return turnVel,I
+    return turnVel
 
+def PID_Angle(start,front,goal,kp=0.5,tol=0.5):
+    angle = getAngle(start,front,goal)
+    if np.abs(angle)<tol:
+        return 0
+    else:
+        return -kp*angle
 
 if __name__ == "__main__":
     N = 10

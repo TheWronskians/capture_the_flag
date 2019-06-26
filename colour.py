@@ -3,10 +3,11 @@ import matplotlib.pyplot as plt
 import cv2
 import time
 
-red = [0.94408584, 0.31975093, 0.38945308]
-purple = [0.27095065, 0.20881326, 0.39608157]
-orange = [0.9919534 , 0.5109771 , 0.37064126]
-yellow = [0.8896688 , 0.83845115, 0.268376  ]
+red = [0.93365103, 0.35130355, 0.28260624]
+purple = [1,1,1]
+orange = [0.99148726, 0.5729994 , 0.25187913]
+yellow = [0.9834839 , 1.        , 0.76263994]
+green = [0.61612934, 0.90352577, 0.5615079 ]
 
 def displayImage(images, nrows = 1, ncols=1, title=[],image_max=0,sizex=15,sizey=8):
     #Handle the case of 1 image
@@ -49,7 +50,8 @@ def getColours():
     purple = plt.imread("purple.png")
     orange = plt.imread("orange.png")
     yellow = plt.imread("yellow.png")
-    return [red,purple,orange,yellow]
+    green = plt.imread("green.png")
+    return [red,purple,orange,yellow,green]
 
 def getAverages(colours):
     avs = []
@@ -62,7 +64,7 @@ def distIm(c1,c2):
     return c1-c2
 
 def findCenters(image,tol=0.05):
-    avs = [red,purple,orange,yellow]
+    avs = [red,purple,orange,yellow,green]
     cs = []
     uR = red+np.ones(3)*tol
     lR = red-np.ones(3)*tol
@@ -72,9 +74,11 @@ def findCenters(image,tol=0.05):
     lO = orange-np.ones(3)*tol
     uY = yellow+np.ones(3)*tol
     lY = yellow-np.ones(3)*tol
-    u = [uR,uP,uO,uY]
-    l = [lR,lP,lO,lY]
-    for i in range(4):
+    uG = green+np.ones(3)*tol
+    lG = green-np.ones(3)*tol
+    u = [uR,uP,uO,uY,uG]
+    l = [lR,lP,lO,lY,lG]
+    for i in range(5):
         mask = cv2.inRange(image, l[i], u[i])
         res = cv2.bitwise_and(image,image, mask= mask)
         pix = np.where(mask==255)
@@ -83,27 +87,30 @@ def findCenters(image,tol=0.05):
         cs.append(centre)
     return cs
 
-
-
-
-
 if __name__ == "__main__":
     test = plt.imread("test.png")[:,:,0:3]
+    #'''
     colours = getColours()
     testCols = []
     print(test.shape)
     avs = getAverages(colours)
+    print(avs)
+    #'''
+    '''
+    avs = []
     for av in avs:
         testIm = np.ones((200,200,3))
         for x in range(200):
             for y in range(200):
                 testIm[x,y,:] = av
         testCols.append(testIm)
+    '''
+    avs = [red,purple,orange,yellow,green]
     #print("Hello")
     #time.sleep(1)
     #print("Hello again")
-    dispCols = colours+testCols
-    displayImage(dispCols,2,4)
+    #dispCols = colours+testCols
+    #displayImage(dispCols,2,4)
     #print(test.shape)
     cs = findCenters(test)
     #print(cs)

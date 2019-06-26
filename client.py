@@ -44,7 +44,7 @@ def getReplies(): #Getting replies from servers.
 def closeConnections(): #Closing connections to different servers.
 
 	clientSockets.close()
-
+'''
 if __name__ == "__main__":#Main function
 
 	createConnections()	#Creates three connections to servers
@@ -79,8 +79,5 @@ if __name__ == "__main__":#Main function
 		print ("got reply = " + str(results) + " from host " +str(serverNames)+ " after " +str(times)+ " seconds")
 		totalResults = totalResults + results
 		totalTime = totalTime + times
-
-		print "answer is " + str(totalResults) #Total prime nos from each server
-		print "Total time elapsed " +str(elapsedTime) #Time after each result has been returned
-		print "Total time elapsed on all servers combined " + str(totalTime)#Total time taken for each server combined
 	closeConnections() #Closing all connections to servers.
+'''

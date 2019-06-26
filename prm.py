@@ -206,7 +206,7 @@ def pruneEdges(graph,obstacle):
                     graph.pruneEdge(i,j)
 
 
-def pathPlan(graph,start,goal,enemy,ball,k,avoidBall,draw=False):
+def pathPlan(graph,start,goal,enemy,ball,k,avoidBall=True,draw=False):
     G = copy.deepcopy(graph)
     N = G.adjacency.shape[0]
     G.add(start)
@@ -229,7 +229,8 @@ def pathPlan(graph,start,goal,enemy,ball,k,avoidBall,draw=False):
     path = dijkstra(G,start,goal)
     if draw:
         drawGraph(G,enemy,ball,0,path)
-    return G.V[path[1]].x,G.V[path[1]].y
+    #return G.V[path[1]].x,G.V[path[1]].y
+    return G.V[path[-1]].x,G.V[path[-1]].y
 
 if __name__ == "__main__":
     N = 100
