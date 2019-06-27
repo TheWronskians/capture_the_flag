@@ -127,13 +127,14 @@ def drawGraph(graph,enemy,ball,adjust=2,path=None,extras=None):
     plt.axis("off")
     plt.show()
 
-def nearestNeighbours(graph,i,k):
+def nearestNeighbours(graph,i,k,robotRadius=15):
     ds  = []
     for j in range(len(graph.V)):
+        d = dist(graph.V[i].x,graph.V[i].y,graph.V[j].x,graph.V[j].y)
         if j==i:
             ds.append(INF)
         else:
-            ds.append(dist(graph.V[i].x,graph.V[i].y,graph.V[j].x,graph.V[j].y))
+            ds.append(d)
 
     ind = np.argsort(ds)
     return ind[:k]
@@ -206,7 +207,7 @@ def pruneEdges(graph,obstacle):
                     graph.pruneEdge(i,j)
 
 
-def pathPlan(graph,start,goal,enemy,ball,k,avoidBall=True,draw=False):
+def pathPlan(graph,start,goal,enemy,ball,k,avoidBall=True,draw=False,w=640,h=480):
     G = copy.deepcopy(graph)
     N = G.adjacency.shape[0]
     G.add(start)
@@ -229,7 +230,10 @@ def pathPlan(graph,start,goal,enemy,ball,k,avoidBall=True,draw=False):
     path = dijkstra(G,start,goal)
     if draw:
         drawGraph(G,enemy,ball,0,path)
-    return G.V[path[1]].x,G.V[path[1]].y #Return next node
+    myPath = [G.V[path[1]].x,G.V[path[1]].y]
+    if myPath[0]==start.x or myPath[1]==start.y:
+        myPath = [h/2,w/2]
+    return myPath[0],myPath[1] #Return next node
     #return G.V[path[-1]].x,G.V[path[-1]].y #Return last node
 
 if __name__ == "__main__":
@@ -243,7 +247,7 @@ if __name__ == "__main__":
     goal = Node(np.random.randint(0,w-wallPad),np.random.randint(0,h-wallPad),N+1)
     enemy = Obstacle(np.random.randint(0,w-wallPad),np.random.randint(0,h-wallPad),10)
     ball = Obstacle(np.random.randint(0,w-wallPad),np.random.randint(0,h-wallPad),5)
-    x,y = pathPlan(graph,start,goal,enemy,ball,k,True,draw=True)
+    x,y = pathPlan(graph,start,goal,enemy,ball,k,True,draw=True,w=640,h=480)
     '''
     while True:
         x,y = pathPlan(graph,start,goal,enemy,ball,k,True)

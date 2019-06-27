@@ -3,6 +3,9 @@ import matplotlib.pyplot as plt
 from prm import *
 import math
 
+min_angle = 0.3
+max_velocity = 0.7
+
 def getAngle(start,front,goal):
     b = start
     a = goal
@@ -34,13 +37,18 @@ def turnToGoal(angle,start,front,goal,kp,ki=0):
 
 def PID_Angle(start,front,goal,k,I,last,tol):
     angle = getAngle(start,front,goal)
+    if np.isnan(angle):
+        angle = 0
+        print("Angle is NAN")
     I += angle
-    D = angle-last
+    D = 0#angle-last
     #print(angle)
     if np.abs(angle-math.pi)<tol:
         return 0,angle
     else:
         turn = k[0]*angle + k[1]*I + k[2]*D
+        if np.abs(turn)<0.1:
+            turn = min_angle*np.sign(turn)
         return turn,angle
 
 def PID_Linear(start,goal,k,I,last,tol):
@@ -52,6 +60,8 @@ def PID_Linear(start,goal,k,I,last,tol):
         return 0,d
     else:
         velocity = k[0]*d + k[1]*I + k[2]*D
+        if velocity>max_velocity:
+            velocity = 0.3
         return velocity,d
 
 

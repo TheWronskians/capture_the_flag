@@ -10,12 +10,13 @@ YELLOW = 3
 GREEN = 4
 BLUE = 5
 
-red = [0.93365103, 0.35130355, 0.28260624]
+#red = [0.93365103, 0.35130355, 0.28260624]
+red = [0.83925676, 0.19983858, 0.15198655]
 white = [1, 1, 1]
 orange = [0.99148726, 0.5729994, 0.25187913]
 yellow = [0.9834839 , 1, 0.76263994]
 green = [0.61612934, 0.90352577, 0.5615079 ]
-blue = [0.28260624, 0.35130355, 0.93365103]
+#blue = [0.28260624, 0.35130355, 0.93365103]
 
 def displayImage(images, nrows = 1, ncols=1, title=[],image_max=0,sizex=15,sizey=8):
     #Handle the case of 1 image
@@ -59,8 +60,8 @@ def getColours():
     orange = plt.imread("orange.png")
     yellow = plt.imread("yellow.png")
     green = plt.imread("green.png")
-    blue = plt.imread("blue.png")
-    return [red,purple,orange,yellow,green,blue]
+    #blue = plt.imread("blue.png")
+    return [red,purple,orange,yellow,green]
 
 def getAverages(colours):
     avs = []
@@ -73,7 +74,7 @@ def distIm(c1,c2):
     return c1-c2
 
 def findCenters(image,tol=0.05):
-    avs = [red,white,orange,yellow,green,blue]
+    avs = [red,white,orange,yellow,green]
     cs = []
     uR = red+np.ones(3)*tol
     lR = red-np.ones(3)*tol
@@ -85,10 +86,8 @@ def findCenters(image,tol=0.05):
     lY = yellow-np.ones(3)*tol
     uG = green+np.ones(3)*tol
     lG = green-np.ones(3)*tol
-    uB = blue+np.ones(3)*tol
-    lB = blue-np.ones(3)*tol
-    u = [uR,uW,uO,uY,uG,uB]
-    l = [lR,lW,lO,lY,lG,lB]
+    u = [uR,uW,uO,uY,uG]
+    l = [lR,lW,lO,lY,lG]
     for i in range(5):
         mask = cv2.inRange(image, l[i], u[i])
         res = cv2.bitwise_and(image,image, mask= mask)
@@ -117,6 +116,7 @@ def calibrate():
     for c in cs:
         ax.scatter(c[1], c[0], s=50, color='cyan')
     plt.show()
+    print(avs)
 
 if __name__ == "__main__":
     calibrate()
