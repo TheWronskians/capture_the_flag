@@ -6,7 +6,7 @@ import colour
 from colour import RED, WHITE, ORANGE, YELLOW, GREEN, BLUE
 import prm
 import motion
-import client
+import client_2 as client
 
 # server names for turtlebots which we connect to
 servers = ["10.199.61.21", ""]
@@ -89,8 +89,9 @@ if __name__ == "__main__":
         #Find path
         x, y = prm.pathPlan(graph, startNode, goalNode, enemy, ball, k, avoidBall=False, draw=False)
         next = prm.Node(x, y, 0)
-        prev_angle = angle
-        prev_distance = distance
+
+        # prev_angle = angle
+        # prev_distance = distance
 
         if iteration % correction_step == 0:
             #Reset points to correct any mistakes

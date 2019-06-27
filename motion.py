@@ -49,8 +49,8 @@ def Stochastic_Angle(start, front, goal, prev_angle, tol):
     if np.abs(angle-math.pi) < tol:
         return 0
     else:
-        # turn = (float(goal - angle)) / 4.0
         turn  = angle / 4.0
+        # turn = (float(goal - angle)) / 4.0
         return turn
 
 
