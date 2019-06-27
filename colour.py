@@ -3,11 +3,19 @@ import matplotlib.pyplot as plt
 import cv2
 import time
 
+RED = 0
+WHITE = 1
+ORANGE = 2
+YELLOW = 3
+GREEN = 4
+BLUE = 5
+
 red = [0.93365103, 0.35130355, 0.28260624]
-purple = [1,1,1]
-orange = [0.99148726, 0.5729994 , 0.25187913]
-yellow = [0.9834839 , 1.        , 0.76263994]
+white = [1, 1, 1]
+orange = [0.99148726, 0.5729994, 0.25187913]
+yellow = [0.9834839 , 1, 0.76263994]
 green = [0.61612934, 0.90352577, 0.5615079 ]
+blue = [0.28260624, 0.35130355, 0.93365103]
 
 def displayImage(images, nrows = 1, ncols=1, title=[],image_max=0,sizex=15,sizey=8):
     #Handle the case of 1 image
@@ -51,7 +59,8 @@ def getColours():
     orange = plt.imread("orange.png")
     yellow = plt.imread("yellow.png")
     green = plt.imread("green.png")
-    return [red,purple,orange,yellow,green]
+    blue = plt.imread("blue.png")
+    return [red,purple,orange,yellow,green,blue]
 
 def getAverages(colours):
     avs = []
@@ -64,20 +73,22 @@ def distIm(c1,c2):
     return c1-c2
 
 def findCenters(image,tol=0.05):
-    avs = [red,purple,orange,yellow,green]
+    avs = [red,white,orange,yellow,green,blue]
     cs = []
     uR = red+np.ones(3)*tol
     lR = red-np.ones(3)*tol
-    uP = purple+np.ones(3)*tol
-    lP = purple-np.ones(3)*tol
+    uW = white+np.ones(3)*tol
+    lW = white-np.ones(3)*tol
     uO = orange+np.ones(3)*tol
     lO = orange-np.ones(3)*tol
     uY = yellow+np.ones(3)*tol
     lY = yellow-np.ones(3)*tol
     uG = green+np.ones(3)*tol
     lG = green-np.ones(3)*tol
-    u = [uR,uP,uO,uY,uG]
-    l = [lR,lP,lO,lY,lG]
+    uB = blue+np.ones(3)*tol
+    lB = blue-np.ones(3)*tol
+    u = [uR,uW,uO,uY,uG,uB]
+    l = [lR,lW,lO,lY,lG,lB]
     for i in range(5):
         mask = cv2.inRange(image, l[i], u[i])
         res = cv2.bitwise_and(image,image, mask= mask)
@@ -87,35 +98,25 @@ def findCenters(image,tol=0.05):
         cs.append(centre)
     return cs
 
-if __name__ == "__main__":
+def calibrate():
     test = plt.imread("test.png")[:,:,0:3]
-    #'''
     colours = getColours()
     testCols = []
-    print(test.shape)
     avs = getAverages(colours)
-    print(avs)
-    #'''
-    '''
-    avs = []
     for av in avs:
         testIm = np.ones((200,200,3))
         for x in range(200):
             for y in range(200):
                 testIm[x,y,:] = av
         testCols.append(testIm)
-    '''
-    avs = [red,purple,orange,yellow,green]
-    #print("Hello")
-    #time.sleep(1)
-    #print("Hello again")
-    #dispCols = colours+testCols
-    #displayImage(dispCols,2,4)
-    #print(test.shape)
     cs = findCenters(test)
-    #print(cs)
+    dispCols = colours+testCols
+    displayImage(dispCols,2,5)
     fig, ax = plt.subplots()
     ax.imshow(test)
     for c in cs:
         ax.scatter(c[1], c[0], s=50, color='cyan')
     plt.show()
+
+if __name__ == "__main__":
+    calibrate()

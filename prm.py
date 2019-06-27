@@ -229,8 +229,8 @@ def pathPlan(graph,start,goal,enemy,ball,k,avoidBall=True,draw=False):
     path = dijkstra(G,start,goal)
     if draw:
         drawGraph(G,enemy,ball,0,path)
-    #return G.V[path[1]].x,G.V[path[1]].y
-    return G.V[path[-1]].x,G.V[path[-1]].y
+    return G.V[path[1]].x,G.V[path[1]].y #Return next node
+    #return G.V[path[-1]].x,G.V[path[-1]].y #Return last node
 
 if __name__ == "__main__":
     N = 100

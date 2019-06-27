@@ -32,7 +32,7 @@ def turnToGoal(angle,start,front,goal,kp,ki=0):
     #turnVel += I
     return turnVel
 
-def PID_Angle(start,front,goal,kp,ki,kd,I,last,tol):
+def PID_Angle(start,front,goal,k,I,last,tol):
     angle = getAngle(start,front,goal)
     I += angle
     D = angle-last
@@ -40,10 +40,10 @@ def PID_Angle(start,front,goal,kp,ki,kd,I,last,tol):
     if np.abs(angle-math.pi)<tol:
         return 0,angle
     else:
-        turn = kp*angle + ki*I + kd*D
+        turn = k[0]*angle + k[1]*I + k[2]*D
         return turn,angle
 
-def PID_Linear(start,goal,kp,ki,kd,I,last,tol):
+def PID_Linear(start,goal,k,I,last,tol):
     d = dist(start,goal)
     I += d
     D = d-last
@@ -51,7 +51,7 @@ def PID_Linear(start,goal,kp,ki,kd,I,last,tol):
     if np.abs(d)<tol:
         return 0,d
     else:
-        velocity = kp*d + ki*I + kd*D
+        velocity = k[0]*d + k[1]*I + k[2]*D
         return velocity,d
 
 
