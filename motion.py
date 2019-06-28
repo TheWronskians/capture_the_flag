@@ -4,7 +4,7 @@ from prm import *
 import math
 
 min_angle = 0.3
-max_velocity = 0.7
+max_velocity = 0.4
 
 def getAngle(start,front,goal):
     b = start
@@ -55,13 +55,14 @@ def PID_Linear(start,goal,k,I,last,tol):
     d = dist(start,goal)
     I += d
     D = d-last
-    #print(angle)
-    if np.abs(d)<tol:
+    if d>last:
         return 0,d
     else:
         velocity = k[0]*d + k[1]*I + k[2]*D
+        '''
         if velocity>max_velocity:
             velocity = 0.3
+        '''
         return velocity,d
 
 

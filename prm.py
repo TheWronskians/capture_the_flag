@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import networkx as nx
 import copy
+import math
 
 INF = 1000000
 
@@ -147,12 +148,27 @@ def initGraph(numSamples,width,height,wallPad,k=10):
     empty = []
     graph = Graph(empty,np.ones((numSamples+2,numSamples+2))*INF)
     #Add nodes
+    #'''
     for i in range(numSamples):
         x = np.random.randint(wallPad,width-wallPad)
         y = np.random.randint(wallPad,height-wallPad)
         node = Node(x,y,i)
         graph.add(node)
-
+    #'''
+    '''
+    N = math.ceil(math.sqrt(numSamples))
+    offset = 20
+    padW = width-wallPad-offset
+    padH = height-wallPad-offset
+    X = np.linspace(wallPad+offset,padW,N)
+    Y = np.linspace(wallPad+offset,padH,N)
+    i = 0
+    for x in X:
+        for y in Y:
+            node = Node(x,y,i)
+            graph.add(node)
+            i+=1
+            '''
     #Get k nearest neighbours
     for node in graph.V:
         neighbours = nearestNeighbours(graph,node.i,k)

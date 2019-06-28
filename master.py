@@ -11,33 +11,40 @@ import client
 
 if __name__ == "__main__":
 
-    N = 100 #Number of samples for PRM
+    N = 13 #Number of samples for PRM
     k = 10  #Number of nearest neighbours for PRM
     W = 640 #Width of arena
     H = 480 #Height of arena
-    Pad = 50 #Padding around edges
+    Pad = 100 #Padding around edges
     graph = prm.initGraph(N,H,W,Pad,k)
     cap = cv2.VideoCapture(0)
     client.createConnections()	#Creates three connections to servers
     #PID Stuff
 
-    k_angle = [0.15,0.01,0]
-    k_linear = [0.001,0,0]
+    k_angle = [0.15,0.025,0.1]
+    k_linear = [0.002,0.0001,0.01]
     I = 0
     Il = 0
     last = 0
     lastl = 0
     angle = 0
     distance = 0
-    tol = 0.01
+    tol = 0.25
     toll = 0.01
     turnVel = 3
     velocity = 3
 
+    enemyRadius = 60
+    ballRadius = 50
+
     returnVel = 0.3
 
     iteration = 0
-    correction_step = 100
+    correction_step = 20
+
+    go_to_centre = False
+
+    lastBall = [H/2,W/2]
 
     while(True):
 
@@ -58,105 +65,90 @@ if __name__ == "__main__":
         front = cs[RED]
         start = [(back[0]+front[0])/2,(back[1]+front[1])/2]
         goal = cs[GREEN]
-        enemy = cs[ORANGE]
+        ball = cs[GREEN]
+        enemy_front = cs[ORANGE]
+        enemy_back = cs[YELLOW]
+        #enemy = [(enemy_back[0]+enemy_front[0])/2,(enemy_back[1]+enemy_front[1])/2]
+        enemy = [-100,-100]
 
+        '''
+        if np.isnan(enemy[0]):
+            enemy[0] = -enemyRadius
+        if np.isnan(enemy[1]):
+            enemy[1] = -enemyRadius
 
+        if np.isnan(ball[0]):
+            ball[0] = -enemyRadius
+        if np.isnan(ball[1]):
+            ball[1] = -enemyRadius
+        '''
+        ball = [1000,1000]
+        enemy = [1000,1000]
         resetPID = False
-
 
         if np.isnan(goal[0]) or np.isnan(goal[1]):
             # Can't see ball
             print("Can't see ball, going to centre")
-            goal = [H/2,W/2]
+            goal = lastBall
+        else:
+            lastBall = goal
 
-        noBack = False
-        noFront = False
-        if np.isnan(back[0]) or np.isnan(back[1]):
-            noBack = True
-        if np.isnan(front[0]) or np.isnan(front[1]):
-            noFront = True
+        goalDisp = [0,0]
+        startNode = prm.Node(start[0],start[1],N)
+        goalNode = prm.Node(goal[0]+goalDisp[0],goal[1]+goalDisp[1],N+1)
+        frontNode = prm.Node(front[0],front[1],N)
+        enemy = prm.Obstacle(enemy[0],enemy[1],enemyRadius)
+        ballNode = prm.Obstacle(ball[0],ball[1],ballRadius)
 
-        if not noFront and noBack:
-            #Can see front, but not back
-            limitSet = [returnVel,0,0,0,0,0]
-            print("ONLY SEE FRONT")
-            resetPID = True
+        if go_to_centre and motion.dist(startNode,goalNode)<20:
+            go_to_centre = False
 
-        if not noBack and noFront:
-            #Can see back but not front
-            limitSet = [-returnVel,0,0,0,0,0]
-            print("ONLY SEE BACK")
-            resetPID = True
+        #Find path
+        x,y = prm.pathPlan(graph,startNode,goalNode,enemy,ballNode,k,avoidBall=False,draw=False,w=640,h=480)
+        next = prm.Node(x,y,0)
 
-        if noBack and noFront:
-            #Can't see either
-            limitSet = [0,0,0,0,0,0.3]
-            print("SPIN MODE")
-            resetPID = True
+        if motion.dist(startNode,goalNode)<100:
+            print("RESET NEXT TO GOAL")
+            next = prm.Node(goalNode.x,goalNode.y,0)
 
-        if iteration % correction_step == 0:
-            resetPID = True
+        last = angle
+        lastl = distance
 
-        if resetPID:
+        if(turnVel!=0):
+            #Turn to goal
+            Il = 0
+            turnVel,angle = motion.PID_Angle(startNode,frontNode,next,k_angle,I,last,tol)
+            if np.isnan(turnVel):
+                print("ANGLE IS NAN")
+                turnVel = 0
+            limitSet = [0, 0, 0, 0, 0, turnVel]
+            client.sendToServer(limitSet) #Sending sets to servers
+            results, times = client.getReplies()
+        elif velocity!=0:
+            #Move to goal
+            I = 0
+            velocity,distance = motion.PID_Linear(startNode,next,k_linear,Il,lastl,toll)
+            if np.isnan(velocity):
+                print("VELOCITY IS NAN")
+                velocity = 0
+            limitSet = [velocity, 0, 0, 0, 0, 0]
+            client.sendToServer(limitSet) #Sending sets to servers
+            results, times = client.getReplies()
+        else:
+            #Do nothing
             turnVel = 3
             velocity = 3
-            I = 0
-            Il = 0
-            last = 0
-            lastl = 0
-            angle = 0
-            distance = 0
+            print("turnVel = %i, Velocity = %i" %(turnVel,velocity))
+            #limitSet = [0, 0, 0, 0, 0, 0]
 
-        if (not noBack) and (not noFront):
-            # Set nodes
-            goalDisp = [0,0]
-            startNode = prm.Node(start[0],start[1],N)
-            goalNode = prm.Node(goal[0]+goalDisp[0],goal[1]+goalDisp[1],N+1)
-            frontNode = prm.Node(front[0],front[1],N)
-            enemy = prm.Obstacle(enemy[0],enemy[1],60)
-            ball = prm.Obstacle(cs[GREEN][0],cs[GREEN][1],30)
-
-            #Find path
-            x,y = prm.pathPlan(graph,startNode,goalNode,enemy,ball,k,avoidBall=False,draw=False,w=640,h=480)
-            next = prm.Node(x,y,0)
-            last = angle
-            lastl = distance
+        I += angle
+        Il += distance
 
 
-            if(turnVel!=0):
-                #Turn to goal
-                turnVel,angle = motion.PID_Angle(startNode,frontNode,next,k_angle,I,last,tol)
-                if np.isnan(turnVel):
-                    print("SPIN MODE 2")
-                    turnVel = -0.3
-                limitSet = [0, 0, 0, 0, 0, turnVel]
-            elif velocity!=0:
-                #Move to goal
-                velocity,distance = motion.PID_Linear(startNode,next,k_linear,Il,lastl,toll)
-                if np.isnan(velocity):
-                    print("REVERSE!")
-                    velocity = -0.3
-                limitSet = [velocity, 0, 0, 0, 0, 0]
-            else:
-                #Do nothing
-                limitSet = [0, 0, 0, 0, 0, 0]
 
-            I += angle
-            Il += distance
-
-        if resetPID:
-            endtime = time.time()+3
-            while time.time()<endtime:
-                print("NEED TO CORRECT")
-                client.sendToServer(limitSet) #Sending sets to servers
-                results, times = client.getReplies()
-
-        else:
-            client.sendToServer(limitSet) #Sending sets to servers
-
-            results, times = client.getReplies()
-
-        #print("Can see ball: %s. Goal = [%i,%i], Front = [%i,%i], Next = [%i,%i]" %(ballSee,goalNode.x,goalNode.y,frontNode.x,frontNode.y,next.x, next.y))
+        print("Start: ",startNode.x,startNode.y)
+        print("Ball: ",ballNode.x,ballNode.y)
+        print("Goal: ",goalNode.x,goalNode.y)
         print("Next: ",next.x, next.y)
 
 
@@ -173,11 +165,6 @@ if __name__ == "__main__":
 
         iteration += 1
         print("\n")
-        '''
-        iterWait = time.time()+0.1
-        while time.time()<iterWait:
-            pass
-        #'''
     client.closeConnections() #Closing all connections to servers.
 
     # When everything done, release the capture
