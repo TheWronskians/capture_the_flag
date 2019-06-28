@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 import prm
 import colour
-from colour import GREEN, ORANGE
+from colour import GREEN, BLUE
 
 cap = cv2.VideoCapture(0)
 
@@ -33,8 +33,8 @@ while(True):
 
     if not (np.isnan(cs[GREEN][0]) or np.isnan(cs[GREEN][1])):
         start = prm.Node(cs[GREEN][0],cs[GREEN][1],N)
-    if not (np.isnan(cs[ORANGE][0]) or np.isnan(cs[ORANGE][1])):
-        ball = prm.Obstacle(cs[ORANGE][0],cs[ORANGE][1],10)
+    if not (np.isnan(cs[BLUE][0]) or np.isnan(cs[BLUE][1])):
+        ball = prm.Obstacle(cs[BLUE][0],cs[BLUE][1],10)
 
 
     x,y = prm.pathPlan(graph,start,goal,enemy,ball,k,True,draw=True,w=640,h=480,frame=frame)

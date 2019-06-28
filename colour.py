@@ -6,18 +6,17 @@ import math
 
 RED = 0
 WHITE = 1
-ORANGE = 2
+BLUE = 2
 YELLOW = 3
 GREEN = 4
-BLUE = 5
 
 red = [0.93365103, 0.35130355, 0.28260624] #Light
 #red = [0.83925676, 0.19983858, 0.15198655] #Dark
 white = [1, 1, 1]
-orange = [0.99148726, 0.5729994, 0.25187913]
+#orange = [0.99148726, 0.5729994, 0.25187913]
 yellow = [0.9834839 , 1, 0.76263994]
 green = [0.61612934, 0.90352577, 0.5615079 ]
-#blue = [0.28260624, 0.35130355, 0.93365103]
+blue = [0.501899  , 0.89933634, 0.99078834]
 
 def displayImage(images, nrows = 1, ncols=1, title=[],image_max=0,sizex=15,sizey=8):
     #Handle the case of 1 image
@@ -56,13 +55,13 @@ def displayImage(images, nrows = 1, ncols=1, title=[],image_max=0,sizex=15,sizey
     return ax
 
 def getColours():
-    red = plt.imread("red.png")
+    red = plt.imread("red_light.png")
     purple = plt.imread("purple.png")
-    orange = plt.imread("orange.png")
+    blue = plt.imread("blue.png")
     yellow = plt.imread("yellow.png")
     green = plt.imread("green.png")
     #blue = plt.imread("blue.png")
-    return [red,purple,orange,yellow,green]
+    return [red,purple,blue,yellow,green]
 
 def getAverages(colours):
     avs = []
@@ -75,7 +74,7 @@ def distIm(c1,c2):
     return c1-c2
 
 def drawOnFeed(frame,cs):
-    avs = [red,white,orange,yellow,green]
+    avs = [red,white,blue,yellow,green]
     for i in range(len(avs)):
         if not(np.isnan(cs[i][0]) or np.isnan(cs[i][1])):
             newCol = (int(avs[i][2]*255),int(avs[i][1]*255),int(avs[i][0]*255)) #Reversed because BGR
@@ -83,20 +82,20 @@ def drawOnFeed(frame,cs):
             cv2.circle(frame,newC,5,newCol,2)
 
 def findCenters(image,tol=0.05,draw=False,frame=None):
-    avs = [red,white,orange,yellow,green]
+    avs = [red,white,blue,yellow,green]
     cs = []
     uR = red+np.ones(3)*tol
     lR = red-np.ones(3)*tol
     uW = white+np.ones(3)*tol
     lW = white-np.ones(3)*tol
-    uO = orange+np.ones(3)*tol
-    lO = orange-np.ones(3)*tol
+    uB = blue+np.ones(3)*tol
+    lB = blue-np.ones(3)*tol
     uY = yellow+np.ones(3)*tol
     lY = yellow-np.ones(3)*tol
     uG = green+np.ones(3)*tol
     lG = green-np.ones(3)*tol
-    u = [uR,uW,uO,uY,uG]
-    l = [lR,lW,lO,lY,lG]
+    u = [uR,uW,uB,uY,uG]
+    l = [lR,lW,lB,lY,lG]
     for i in range(5):
         mask = cv2.inRange(image, l[i], u[i])
         res = cv2.bitwise_and(image,image, mask= mask)

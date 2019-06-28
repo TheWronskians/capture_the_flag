@@ -4,7 +4,7 @@ import cv2
 import time
 
 import colour
-from colour import RED, WHITE, ORANGE, YELLOW, GREEN, BLUE
+from colour import RED, WHITE, BLUE, YELLOW, GREEN
 import prm
 import motion
 import client_2 as client
@@ -17,6 +17,15 @@ ports = [12007, 12006]
 sockets = [0, 1]
 # 0 = Red-White
 # 1 = Orange-Yellow
+
+N = 9 #Number of samples for PRM
+k = 10  #Number of nearest neighbours for PRM
+W = 640 #Width of arena
+H = 480 #Height of arena
+Pad = 50 #Padding around edges
+manual = True
+
+lastBall = [[H/2,W/2],[H/2,W/2]]
 
 #PID Stuff
 
@@ -33,24 +42,28 @@ toll = 0.01
 turnVel = [3,3]
 velocity = [3,3]
 
-enemyRadius = 60
-ballRadius = 10
+enemyRadius = 80
+ballRadius = 20
 
-lastBall = [H/2,W/2]
+
 
 def run(bot):
     ball = cs[GREEN]
+
     if bot==0:
         # Define points
         back = cs[WHITE]
         front = cs[RED]
         start = [(back[0]+front[0])/2,(back[1]+front[1])/2]
-        goal = cs[GREEN]
-        enemy_front = cs[ORANGE]
+
+        enemy_front = cs[BLUE]
         enemy_back = cs[YELLOW]
         enemy = [(enemy_back[0]+enemy_front[0])/2,(enemy_back[1]+enemy_front[1])/2]
+
+        #goal = cs[GREEN]
+        goal = [(enemy[0]+ball[0])/2,(enemy[1]+ball[1])/2]
     else:
-        front = cs[ORANGE]
+        front = cs[BLUE]
         back = cs[YELLOW]
         start = [(back[0]+front[0])/2,(back[1]+front[1])/2]
 
@@ -58,7 +71,8 @@ def run(bot):
         enemy_back = cs[WHITE]
         enemy = [(enemy_back[0]+enemy_front[0])/2,(enemy_back[1]+enemy_front[1])/2]
 
-        goal = [(enemy[0]+ball[0])/2,(enemy[1]+ball[1])/2]
+        #goal = [(enemy[0]+ball[0])/2,(enemy[1]+ball[1])/2]
+        goal = cs[GREEN]
 
     if np.isnan(enemy[0]):
         enemy[0] = -enemyRadius
@@ -66,14 +80,14 @@ def run(bot):
         enemy[1] = -enemyRadius
 
     if np.isnan(ball[0]) or np.isnan(ball[1]):
-        ball = lastBall
+        ball = lastBall[bot]
 
     if np.isnan(goal[0]) or np.isnan(goal[1]):
         # Can't see ball
         print("Can't see ball, going to centre")
-        goal = lastBall
+        goal = lastBall[bot]
     else:
-        lastBall = goal
+        lastBall[bot] = goal
 
 
     if not(np.isnan(start[0]) or np.isnan(start[1])):
@@ -130,20 +144,14 @@ def run(bot):
 
 
 if __name__ == "__main__":
-
-    N = 9 #Number of samples for PRM
-    k = 10  #Number of nearest neighbours for PRM
-    W = 640 #Width of arena
-    H = 480 #Height of arena
-    Pad = 50 #Padding around edges
-    manual = True
     graph = prm.initGraph(N,H,W,Pad,k,manual)
     cap = cv2.VideoCapture(0)
 
-    # turtlebot server 1
-    client.create_connections(servers[0], ports[0], sockets[0])
     # turtlebot server 2
     client.create_connections(servers[1], ports[1], sockets[1])
+    # turtlebot server 1
+    client.create_connections(servers[0], ports[0], sockets[0])
+
 
     while(True):
 
@@ -153,7 +161,7 @@ if __name__ == "__main__":
         cs = colour.findCenters(image,tol=0.1,draw=True,frame=frame) # Find colour centres
 
         run(0)
-        run(1)
+        #run(1)
 
         cv2.imshow('frame',frame)
 

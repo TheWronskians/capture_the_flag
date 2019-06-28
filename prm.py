@@ -235,9 +235,11 @@ def pruneEdges(graph,obstacle):
 def drawOnFeed(graph,frame,path,enemy=None,ball=None,bot=0):
     N = len(graph.V)
     #Draw enemy and ball
+    '''
     if enemy is not None and not (np.isnan(enemy.y) or np.isnan(enemy.x)):
         enemyPos = (int(round(enemy.y)),int(round(enemy.x)))
         cv2.circle(frame,enemyPos,enemy.radius,(180,105,255),-1)
+    '''
 
     if ball is not None and not (np.isnan(ball.y) or np.isnan(ball.x)):
         ballPos = (int(round(ball.y)),int(round(ball.x)))

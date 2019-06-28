@@ -11,7 +11,7 @@ def create_connections(server_name, server_port, socket):
 	print ("Connected to host " + server_name)
 
 def send_to_server(limit_set, server_name, socket):
-	print ("Sending range " + str(limit_set) + " to host " + str(server_name))
+	#print ("Sending range " + str(limit_set) + " to host " + str(server_name))
 	data = pickle.dumps(limit_set, protocol=2)
 	client_sockets[socket].send(data)
 
