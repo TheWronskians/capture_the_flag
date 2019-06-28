@@ -141,20 +141,29 @@ def nearestNeighbours(graph,i,k,robotRadius=15):
     ind = np.argsort(ds)
     return ind[:k]
 
-def initGraph(numSamples,width,height,wallPad,k=10):
+def initGraph(numSamples,width,height,wallPad,k=10,manual=False):
     '''
     Initialises the graph's adjacency matrix without taking into account obstacles
     or starting/goal positions.
     '''
     empty = []
+
     graph = Graph(empty,np.ones((numSamples+2,numSamples+2))*INF)
     #Add nodes
     #'''
-    for i in range(numSamples):
-        x = np.random.randint(wallPad,width-wallPad)
-        y = np.random.randint(wallPad,height-wallPad)
-        node = Node(x,y,i)
-        graph.add(node)
+    if manual:
+        i = 0
+        for y in [120,320,520]:
+            for x in [120,240,360]:
+                node = Node(x,y,i)
+                graph.add(node)
+                i+=1
+    else:
+        for i in range(numSamples):
+            x = np.random.randint(wallPad,width-wallPad)
+            y = np.random.randint(wallPad,height-wallPad)
+            node = Node(x,y,i)
+            graph.add(node)
     #'''
     '''
     N = math.ceil(math.sqrt(numSamples))
@@ -269,6 +278,12 @@ def pathPlan(graph,start,goal,enemy,ball,k,avoidBall=True,draw=False,w=640,h=480
             d = dist(node.x,node.y,G.V[n].x,G.V[n].y)
             G.adjacency[node.i,n] = d
             G.adjacency[n,node.i] = d
+
+    #Make start and goal neighbours
+    if G.adjacency[start.i,goal.i] == INF:
+        d = dist(start.x,start.y,goal.x,goal.y)
+        G.adjacency[start.i,goal.i] = d
+        G.adjacency[goal.i,start.i] = d
 
     #Prune edges that go through enemy or ball
     pruneEdges(G,enemy)
