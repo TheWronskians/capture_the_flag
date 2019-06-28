@@ -44,12 +44,23 @@ def PID_Angle(start,front,goal,k,I,last,tol):
     D = 0#angle-last
     #print(angle)
     if np.abs(angle-math.pi)<tol:
-        return 0,angle
+        return 0, angle
     else:
         turn = k[0]*angle + k[1]*I + k[2]*D
         if np.abs(turn)<0.1:
             turn = min_angle*np.sign(turn)
         return turn,angle
+
+# stochastic approach to pid for the angle
+def Stochastic_Angle(start, front, goal, prev_angle, tol):
+    angle = getAngle(start, front, goal)
+    if np.abs(angle-math.pi) < tol:
+        return 0
+    else:
+        turn  = angle / 4.0
+        # turn = (float(goal - angle)) / 4.0
+        return turn
+
 
 def PID_Linear(start,goal,k,I,last,tol):
     d = dist(start,goal)
@@ -65,6 +76,14 @@ def PID_Linear(start,goal,k,I,last,tol):
         '''
         return velocity,d
 
+# stochastic approach to pid for velocity
+def Stochastic_Linear(start, goal, tol):
+    distance = (float(goal - start))
+    if np.abs(distance) < tol:
+        return 0
+    else:
+        velocity = distance / 4.0
+        return velocity
 
 
 if __name__ == "__main__":
