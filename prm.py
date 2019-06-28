@@ -232,7 +232,7 @@ def pruneEdges(graph,obstacle):
                 if M<=obstacle.radius:
                     graph.pruneEdge(i,j)
 
-def drawOnFeed(graph,frame,path,enemy=None,ball=None):
+def drawOnFeed(graph,frame,path,enemy=None,ball=None,bot=0):
     N = len(graph.V)
     #Draw enemy and ball
     if enemy is not None and not (np.isnan(enemy.y) or np.isnan(enemy.x)):
@@ -260,12 +260,16 @@ def drawOnFeed(graph,frame,path,enemy=None,ball=None):
         p2 = (graph.V[path[i+1]].y,graph.V[path[i+1]].x)
         newP1 = (int(round(p1[0])),int(round(p1[1])))
         newP2 = (int(round(p2[0])),int(round(p2[1])))
-        cv2.line(frame,newP1,newP2,(255,0,0),1)
+        if bot==0:
+            pathColor = (255,0,0)
+        else:
+            pathColor = (255,0,255)
+        cv2.line(frame,newP1,newP2,pathColor,1)
 
 
 
 
-def pathPlan(graph,start,goal,enemy,ball,k,avoidBall=True,draw=False,w=640,h=480,frame=None):
+def pathPlan(graph,start,goal,enemy,ball,k,avoidBall=True,draw=False,w=640,h=480,frame=None,bot=0):
     G = copy.deepcopy(graph)
     N = G.adjacency.shape[0]
     G.add(start)
@@ -294,7 +298,7 @@ def pathPlan(graph,start,goal,enemy,ball,k,avoidBall=True,draw=False,w=640,h=480
     path = dijkstra(G,start,goal)
     if draw:
         if frame is not None:
-            drawOnFeed(G,frame,path,enemy,ball)
+            drawOnFeed(G,frame,path,enemy,ball,bot)
         else:
             drawGraph(G,enemy,ball,0,path)
     myPath = [G.V[path[1]].x,G.V[path[1]].y]

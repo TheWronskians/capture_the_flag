@@ -8,7 +8,7 @@ client_sockets = [socket(AF_INET, SOCK_STREAM), socket(AF_INET, SOCK_STREAM)]
 def create_connections(server_name, server_port, socket):
 	#Creating connections with servers.
 	client_sockets[socket].connect((server_name, server_port))
-	print ("Connected to host " + serverNames)
+	print ("Connected to host " + server_name)
 
 def send_to_server(limit_set, server_name, socket):
 	print ("Sending range " + str(limit_set) + " to host " + str(server_name))
