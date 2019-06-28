@@ -9,7 +9,7 @@ import motion
 import client_2 as client
 
 # server names for turtlebots which we connect to
-servers = ["10.199.61.21", ""]
+servers = ["10.199.61.21", "10.199.26.14"]
 # ports in which the messages pass through
 ports = [12007, 12006]
 # sockets for each port/server connection

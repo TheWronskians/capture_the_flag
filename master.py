@@ -7,7 +7,14 @@ import colour
 from colour import RED, WHITE, ORANGE, YELLOW, GREEN, BLUE
 import prm
 import motion
-import client
+import client_2 as client
+
+# server names for turtlebots which we connect to
+servers = ["10.199.61.21", "10.199.26.14"]
+# ports in which the messages pass through
+ports = [12007, 12006]
+# sockets for each port/server connection
+sockets = [0, 1]
 
 if __name__ == "__main__":
 
@@ -19,7 +26,10 @@ if __name__ == "__main__":
     manual = True
     graph = prm.initGraph(N,H,W,Pad,k,manual)
     cap = cv2.VideoCapture(0)
-    client.createConnections()	#Creates three connections to servers
+    # turtlebot server 1
+    client.create_connections(servers[0], ports[0], sockets[0])
+    # turtlebot server 2
+    #client.create_connections(servers[1], ports[1], sockets[1])
     #PID Stuff
 
     k_angle = [0.15,0.025,0.1]
@@ -113,8 +123,8 @@ if __name__ == "__main__":
                     print("ANGLE IS NAN")
                     turnVel = 0
                 limitSet = [0, 0, 0, 0, 0, turnVel]
-                client.sendToServer(limitSet) #Sending sets to servers
-                results, times = client.getReplies()
+                client.send_to_server(limitSet, sockets[0]) #Sending sets to servers
+                results = client.get_replies(sockets[0])
             elif velocity!=0:
                 #Move to goal
                 I = 0
@@ -123,8 +133,8 @@ if __name__ == "__main__":
                     print("VELOCITY IS NAN")
                     velocity = 0
                 limitSet = [velocity, 0, 0, 0, 0, 0]
-                client.sendToServer(limitSet) #Sending sets to servers
-                results, times = client.getReplies()
+                client.send_to_server(limitSet, sockets[0]) #Sending sets to servers
+                results = client.get_replies(sockets[0])
             else:
                 #Do nothing
                 turnVel = 3
@@ -143,7 +153,8 @@ if __name__ == "__main__":
         iteration += 1
         print("\n")
 
-    client.closeConnections() #Closing all connections to servers.
+    client.close_connections(sockets[0]) #Closing all connections to servers.
+    #client.close_connections(sockets[1])
 
     # When everything done, release the capture
     cap.release()

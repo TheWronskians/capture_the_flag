@@ -21,7 +21,7 @@ def get_replies(socket):
 	reply_answer_deserialized = pickle.loads(reply_answer_serialized) # pickle to array
 	results = (reply_answer_deserialized[0]) #Extracting results from the array
 	return results
-def close_connections(): #Closing connections to different servers.
+def close_connections(socket): #Closing connections to different servers.
 
 	client_sockets[socket].close()
 '''
