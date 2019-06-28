@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import cv2
 import time
+import math
 
 RED = 0
 WHITE = 1
@@ -73,7 +74,15 @@ def getAverages(colours):
 def distIm(c1,c2):
     return c1-c2
 
-def findCenters(image,tol=0.05):
+def drawOnFeed(frame,cs):
+    avs = [red,white,orange,yellow,green]
+    for i in range(len(avs)):
+        if not(np.isnan(cs[i][0]) or np.isnan(cs[i][1])):
+            newCol = (int(avs[i][2]*255),int(avs[i][1]*255),int(avs[i][0]*255)) #Reversed because BGR
+            newC = (int(round(cs[i][1])),int(round(cs[i][0]))) #Reversed because image
+            cv2.circle(frame,newC,5,newCol,2)
+
+def findCenters(image,tol=0.05,draw=False,frame=None):
     avs = [red,white,orange,yellow,green]
     cs = []
     uR = red+np.ones(3)*tol
@@ -95,6 +104,8 @@ def findCenters(image,tol=0.05):
         pixels = np.array([pix[0],pix[1]])
         centre = np.mean(pixels,axis=1)
         cs.append(centre)
+    if draw and frame is not None:
+        drawOnFeed(frame,cs)
     return cs
 
 def calibrate():

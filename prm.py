@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import networkx as nx
 import copy
 import math
+import cv2
 
 INF = 1000000
 
@@ -222,8 +223,40 @@ def pruneEdges(graph,obstacle):
                 if M<=obstacle.radius:
                     graph.pruneEdge(i,j)
 
+def drawOnFeed(graph,frame,path,enemy=None,ball=None):
+    N = len(graph.V)
+    #Draw enemy and ball
+    if enemy is not None and not (np.isnan(enemy.y) or np.isnan(enemy.x)):
+        enemyPos = (int(round(enemy.y)),int(round(enemy.x)))
+        cv2.circle(frame,enemyPos,enemy.radius,(180,105,255),-1)
 
-def pathPlan(graph,start,goal,enemy,ball,k,avoidBall=True,draw=False,w=640,h=480):
+    if ball is not None and not (np.isnan(ball.y) or np.isnan(ball.x)):
+        ballPos = (int(round(ball.y)),int(round(ball.x)))
+        cv2.circle(frame,ballPos,ball.radius,(255,255,224),-1)
+
+    #Draw centres
+    for v in graph.V:
+        if v.i == N-2:
+            color = (0,255,0) #Start
+        elif v.i == N-1:
+            color = (0,0,255) #Goal
+        else:
+            color = (255,0,0) #Anything else
+        newC = (int(round(v.y)),int(round(v.x)))
+        cv2.circle(frame,newC,5,color,-1)
+
+    #Draw Path
+    for i in range(len(path)-1):
+        p1 = (graph.V[path[i]].y,graph.V[path[i]].x)
+        p2 = (graph.V[path[i+1]].y,graph.V[path[i+1]].x)
+        newP1 = (int(round(p1[0])),int(round(p1[1])))
+        newP2 = (int(round(p2[0])),int(round(p2[1])))
+        cv2.line(frame,newP1,newP2,(255,0,0),1)
+
+
+
+
+def pathPlan(graph,start,goal,enemy,ball,k,avoidBall=True,draw=False,w=640,h=480,frame=None):
     G = copy.deepcopy(graph)
     N = G.adjacency.shape[0]
     G.add(start)
@@ -245,10 +278,15 @@ def pathPlan(graph,start,goal,enemy,ball,k,avoidBall=True,draw=False,w=640,h=480
     #Shortest path from start to goal
     path = dijkstra(G,start,goal)
     if draw:
-        drawGraph(G,enemy,ball,0,path)
+        if frame is not None:
+            drawOnFeed(G,frame,path,enemy,ball)
+        else:
+            drawGraph(G,enemy,ball,0,path)
     myPath = [G.V[path[1]].x,G.V[path[1]].y]
+    '''
     if myPath[0]==start.x or myPath[1]==start.y:
         myPath = [h/2,w/2]
+    '''
     return myPath[0],myPath[1] #Return next node
     #return G.V[path[-1]].x,G.V[path[-1]].y #Return last node
 
