@@ -60,8 +60,8 @@ def run(bot):
         enemy_back = cs[YELLOW]
         enemy = [(enemy_back[0]+enemy_front[0])/2,(enemy_back[1]+enemy_front[1])/2]
 
-        #goal = cs[GREEN]
-        goal = [(enemy[0]+ball[0])/2,(enemy[1]+ball[1])/2]
+        goal = cs[GREEN]
+        #goal = [(enemy[0]+ball[0])/2,(enemy[1]+ball[1])/2]
     else:
         front = cs[BLUE]
         back = cs[YELLOW]
@@ -71,8 +71,8 @@ def run(bot):
         enemy_back = cs[WHITE]
         enemy = [(enemy_back[0]+enemy_front[0])/2,(enemy_back[1]+enemy_front[1])/2]
 
-        #goal = [(enemy[0]+ball[0])/2,(enemy[1]+ball[1])/2]
-        goal = cs[GREEN]
+        goal = [(enemy[0]+ball[0])/2,(enemy[1]+ball[1])/2]
+        #goal = cs[GREEN]
 
     if np.isnan(enemy[0]):
         enemy[0] = -enemyRadius
@@ -161,7 +161,7 @@ if __name__ == "__main__":
         cs = colour.findCenters(image,tol=0.1,draw=True,frame=frame) # Find colour centres
 
         run(0)
-        #run(1)
+        run(1)
 
         cv2.imshow('frame',frame)
 
