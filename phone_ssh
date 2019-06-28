@@ -3,10 +3,10 @@
 echo "Sourcing ROS"
 source /opt/ros/kinetic/setup.bash
 echo "Changing directory"
-cd Desktop/capture_the_flag/turtlebot_ws
-"Sourcing the devel"
+cd ~/Desktop/capture_the_flag/turtlebot_ws
+echo "Sourcing the devel"
 source devel/setup.bash
-"Going to run directory"
+echo "Going to run directory"
 cd src/turtle_pkg/scripts
-"Running the server"
-rosrun turtle_pkg turtlebot_controller_2.py
+echo "Running the server"
+rosrun turtle_pkg turtlebot_controller.py

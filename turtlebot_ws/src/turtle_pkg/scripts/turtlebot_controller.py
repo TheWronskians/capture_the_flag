@@ -19,15 +19,15 @@ def move(x, y, z, ax, ay, az):
 
 
     while not rospy.is_shutdown():
-        time_end = time.time() + 1
-        while(time.time() < time_end):
-            velocity_msg.linear.x = x;
-            velocity_msg.linear.y = y;
-            velocity_msg.linear.z = z;
-            velocity_msg.angular.x = ax;
-            velocity_msg.angular.y = ay;
-            velocity_msg.angular.z = az;
-            velocity_publisher.publish(velocity_msg)
+        # time_end = time.time() + 1
+        # while(time.time() < time_end):
+        velocity_msg.linear.x = x;
+        velocity_msg.linear.y = y;
+        velocity_msg.linear.z = z;
+        velocity_msg.angular.x = ax;
+        velocity_msg.angular.y = ay;
+        velocity_msg.angular.z = az;
+        velocity_publisher.publish(velocity_msg)
         # exiting the loop
         break
 if __name__ == '__main__':
