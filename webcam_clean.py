@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 import prm
 import colour
-from colour import GREEN, ORANGE
+from colour import GREEN, BLUE
 
 cap = cv2.VideoCapture(0)
 

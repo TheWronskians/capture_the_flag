@@ -6,6 +6,8 @@ import math
 min_angle = 0.3
 max_velocity = 0.4
 
+SLOWBOT = 1.3
+
 def getAngle(start,front,goal):
     b = start
     a = goal
@@ -35,8 +37,11 @@ def turnToGoal(angle,start,front,goal,kp,ki=0):
     #turnVel += I
     return turnVel
 
-def PID_Angle(start,front,goal,k,I,last,tol):
+def PID_Angle(start,front,goal,k,I,last,tol,bot):
     angle = getAngle(start,front,goal)
+    mult = 1
+    if bot==1:
+        mult = 1.5
     if np.isnan(angle):
         angle = 0
         print("Angle is NAN")
@@ -49,21 +54,27 @@ def PID_Angle(start,front,goal,k,I,last,tol):
         turn = k[0]*angle + k[1]*I + k[2]*D
         if np.abs(turn)<0.1:
             turn = min_angle*np.sign(turn)
-        return turn,angle
+        return mult*turn,angle
 
 # stochastic approach to pid for the angle
-def Stochastic_Angle(start, front, goal, prev_angle, tol):
+def Stochastic_Angle(start, front, goal, tol, bot):
     angle = getAngle(start, front, goal)
+    mult = 1
+    if bot == 1:
+        mult = SLOWBOT
     if np.abs(angle-math.pi) < tol:
-        return 0
+        return 0, angle
     else:
         turn  = angle / 4.0
         # turn = (float(goal - angle)) / 4.0
-        return turn
+        return mult*turn, angle
 
 
-def PID_Linear(start,goal,k,I,last,tol):
+def PID_Linear(start,goal,k,I,last,tol,bot):
     d = dist(start,goal)
+    mult = 1
+    if bot==1:
+        mult = SLOWBOT
     I += d
     D = d-last
     if d>last:
@@ -74,16 +85,19 @@ def PID_Linear(start,goal,k,I,last,tol):
         if velocity>max_velocity:
             velocity = 0.3
         '''
-        return velocity,d
+        return mult*velocity,d
 
 # stochastic approach to pid for velocity
-def Stochastic_Linear(start, goal, tol):
-    distance = (float(goal - start))
+def Stochastic_Linear(start, goal, tol, bot):
+    distance = dist(start,goal)
+    mult = 1
+    if bot == 1:
+        mult = 1.5
     if np.abs(distance) < tol:
-        return 0
+        return 0, distance
     else:
         velocity = distance / 4.0
-        return velocity
+        return mult*velocity, distance
 
 
 if __name__ == "__main__":

@@ -15,7 +15,7 @@ h = 640
 w = 480
 graph = prm.initGraph(N,w,h,wallPad,k)
 start = prm.Node(np.random.randint(0,w-wallPad),np.random.randint(0,h-wallPad),N)
-goal = prm.Node(np.random.randint(0,w-wallPad),np.random.randint(0,h-wallPad),N+1)
+goal = prm.Node(w/2,h/2,N+1)
 enemy = prm.Obstacle(w/2,h/2,60)
 ball = prm.Obstacle(np.random.randint(0,w-wallPad),np.random.randint(0,h-wallPad),10)
 while(True):

@@ -84,7 +84,7 @@ def run(bot):
 
     if np.isnan(goal[0]) or np.isnan(goal[1]):
         # Can't see ball
-        print("Can't see ball, going to centre")
+        #print("Can't see ball, going to centre")
         goal = lastBall[bot]
     else:
         lastBall[bot] = goal
@@ -102,9 +102,11 @@ def run(bot):
         x,y = prm.pathPlan(graph,startNode,goalNode,enemy,ballNode,k,avoidBall=False,draw=True,w=640,h=480,frame=frame,bot=bot)
         next = prm.Node(x,y,0)
 
-        if motion.dist(startNode,goalNode)<100:
-            print("RESET NEXT TO GOAL")
+        '''
+        if motion.dist(startNode,goalNode)<enemyRadius:
+            #print("RESET NEXT TO GOAL")
             next = prm.Node(goalNode.x,goalNode.y,0)
+        '''
 
         last[bot] = angle[bot]
         lastl[bot] = distance[bot]
@@ -112,7 +114,8 @@ def run(bot):
         if(turnVel[bot]!=0):
             #Turn to goal
             Il[bot] = 0
-            turnVel[bot],angle[bot] = motion.PID_Angle(startNode,frontNode,next,k_angle[bot],I[bot],last[bot],tol)
+            turnVel[bot],angle[bot] = motion.PID_Angle(startNode,frontNode,next,k_angle[bot],I[bot],last[bot],tol,bot)
+            #turnVel[bot],angle[bot] = motion.Stochastic_Angle(startNode, frontNode, next, tol, bot)
             if np.isnan(turnVel[bot]):
                 print("ANGLE IS NAN")
                 turnVel[bot] = 0
@@ -122,7 +125,9 @@ def run(bot):
         elif velocity[bot]!=0:
             #Move to goal
             I[bot] = 0
-            velocity[bot],distance[bot] = motion.PID_Linear(startNode,next,k_linear[bot],Il[bot],lastl[bot],toll)
+            velocity[bot],distance[bot] = motion.PID_Linear(startNode,next,k_linear[bot],Il[bot],lastl[bot],toll,bot)
+            #velocity[bot],distance[bot] = motion.Stochastic_Linear(startNode, next, toll, bot)
+
             if np.isnan(velocity[bot]):
                 print("VELOCITY IS NAN")
                 velocity[bot] = 0
@@ -133,7 +138,7 @@ def run(bot):
             #Do nothing
             turnVel[bot] = 3
             velocity[bot] = 3
-            print("turnVel = %i, Velocity = %i" %(turnVel[bot],velocity[bot]))
+            #print("turnVel = %i, Velocity = %i" %(turnVel[bot],velocity[bot]))
             #limitSet = [0, 0, 0, 0, 0, 0]
 
         I[bot] += angle[bot]

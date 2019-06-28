@@ -274,8 +274,26 @@ def drawOnFeed(graph,frame,path,enemy=None,ball=None,bot=0):
 def pathPlan(graph,start,goal,enemy,ball,k,avoidBall=True,draw=False,w=640,h=480,frame=None,bot=0):
     G = copy.deepcopy(graph)
     N = G.adjacency.shape[0]
-    G.add(start)
-    G.add(goal)
+
+    if bot==0:
+        G.add(start)
+        if dist(goal.x,goal.y,enemy.x,enemy.y)<enemy.radius:
+            found = False
+            i = 0
+            while not found:
+                if i<N:
+                    v = G.V[i]
+                    if dist(v.x,v.y,enemy.x,enemy.y)>enemy.radius:
+                        found = True
+                    i+=1
+                else:
+                    v = start
+            goal = v
+        else:
+            G.add(goal)
+    else:
+        G.add(start)
+        G.add(goal)
 
     #Get k nearest neighbours
     for node in [start,goal]:
