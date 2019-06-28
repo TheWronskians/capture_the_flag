@@ -2,48 +2,28 @@ from socket import *
 import pickle
 import time
 
-clientSockets= socket(AF_INET, SOCK_STREAM)
-serverNames = "10.199.61.21"
+# creating sockects for the different turtlebot servers
+client_sockets = [socket(AF_INET, SOCK_STREAM), socket(AF_INET, SOCK_STREAM)]
 
+def create_connections(server_name, server_port, socket):
+	#Creating connections with servers.
+	client_sockets[socket].connect((server_name, server_port))
+	print ("Connected to host " + server_name)
 
+def send_to_server(limit_set, server_name, socket):
+	#print ("Sending range " + str(limit_set) + " to host " + str(server_name))
+	data = pickle.dumps(limit_set, protocol=2)
+	client_sockets[socket].send(data)
 
-def createConnections(): #Creating connections with servers.
+def get_replies(socket):
+	 #Getting replies from servers.
+	reply_answer_serialized = client_sockets[socket].recv(1024) # data in pickle format
+	reply_answer_deserialized = pickle.loads(reply_answer_serialized) # pickle to array
+	results = (reply_answer_deserialized[0]) #Extracting results from the array
+	return results
+def close_connections(socket): #Closing connections to different servers.
 
-	serverPort = 12007 # ports created
-
-	clientSockets.connect((serverNames,serverPort))
-	print ("connected to host "+ serverNames)
-
-
-def sendToServer(limitSet): #Looping through servers and
-	                           #sending the search limits 'range' to servers.
-
-	print ("sending range " + str(limitSet) +" to host " + str(serverNames))
-	data_numbers = pickle.dumps(limitSet,protocol=2)
-	clientSockets.send(data_numbers)
-
-def sendToServerString(string): #Looping through servers and
-	                           #sending the search limits 'range' to servers.
-
-	print("Sending string: " + str(string))
-	data_numbers = pickle.dumps(string)
-	clientSockets.send(data_numbers)
-
-
-def getReplies(): #Getting replies from servers.
-
-	replyAnswerSerialized = clientSockets.recv(1024) #Recieving data in Pickle format
-
-	replyAnswerDeserialized = pickle.loads(replyAnswerSerialized)#Converting from Pickle format to 'array' format
-
-	results=(replyAnswerDeserialized[0]) #Extracting results from the array
-	times=(replyAnswerDeserialized[1]) #Extracting search time
-
-	return results, times
-
-def closeConnections(): #Closing connections to different servers.
-
-	clientSockets.close()
+	client_sockets[socket].close()
 '''
 if __name__ == "__main__":#Main function
 
