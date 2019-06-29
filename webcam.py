@@ -1,6 +1,7 @@
 import numpy as np
 import cv2
 import matplotlib.pyplot as plt
+import time
 
 import prm
 import colour
@@ -8,16 +9,29 @@ from colour import GREEN, BLUE
 
 cap = cv2.VideoCapture(0)
 
+
+
 N = 100
 k = 10
 wallPad = 100
 h = 640
 w = 480
+
+directory = "footage/"
+format = ".avi"
+timestamp = time.ctime(time.time()).split(" ")[3].split(":")
+filename = "output-"+timestamp[0]+"-"+timestamp[1]+"-"+timestamp[2]
+print(filename)
+
+fourcc = cv2.VideoWriter_fourcc('M','J','P','G')
+out = cv2.VideoWriter(directory+filename+format, fourcc, 20.0, (int(cap.get(3)),int(cap.get(4))))
+
 graph = prm.initGraph(N,w,h,wallPad,k)
 start = prm.Node(np.random.randint(0,w-wallPad),np.random.randint(0,h-wallPad),N)
 goal = prm.Node(w/2,h/2,N+1)
 enemy = prm.Obstacle(w/2,h/2,60)
 ball = prm.Obstacle(np.random.randint(0,w-wallPad),np.random.randint(0,h-wallPad),10)
+
 while(True):
     # Capture frame-by-frame
     ret, frame = cap.read()
@@ -40,10 +54,13 @@ while(True):
     x,y = prm.pathPlan(graph,start,goal,enemy,ball,k,True,draw=True,w=640,h=480,frame=frame)
 
     cv2.imshow('frame',frame)
+    out.write(frame)
 
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
+
 # When everything done, release the capture
 cap.release()
+out.release()
 cv2.destroyAllWindows()
