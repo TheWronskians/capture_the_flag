@@ -32,6 +32,14 @@ goal = prm.Node(w/2,h/2,N+1)
 enemy = prm.Obstacle(w/2,h/2,60)
 ball = prm.Obstacle(np.random.randint(0,w-wallPad),np.random.randint(0,h-wallPad),10)
 
+font = cv2.FONT_HERSHEY_SIMPLEX
+topLeft = (20,50)
+fontScale = 1
+fontColor = (255,255,255)
+lineType = 2
+
+
+
 while(True):
     # Capture frame-by-frame
     ret, frame = cap.read()
@@ -44,6 +52,10 @@ while(True):
     cs = colour.findCenters(image,tol=0.1,draw=True,frame=frame) # Find colour centres
     #print(array_values.shape)
     # Display the resulting frame
+
+    timestr = "Time: " + time.ctime(time.time()).split(" ")[3]
+
+    cv2.putText(frame,timestr, topLeft, font, fontScale,fontColor,lineType)
 
     if not (np.isnan(cs[GREEN][0]) or np.isnan(cs[GREEN][1])):
         start = prm.Node(cs[GREEN][0],cs[GREEN][1],N)
