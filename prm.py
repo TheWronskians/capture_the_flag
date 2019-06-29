@@ -153,8 +153,8 @@ def initGraph(numSamples,width,height,wallPad,k=10,manual=False):
     #'''
     if manual:
         i = 0
-        for y in [120,320,520]:
-            for x in [120,240,360]:
+        for y in [100,320,540]:
+            for x in [100,240,380]:
                 node = Node(x,y,i)
                 graph.add(node)
                 i+=1
