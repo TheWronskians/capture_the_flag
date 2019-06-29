@@ -41,7 +41,7 @@ def PID_Angle(start,front,goal,k,I,last,tol,bot):
     angle = getAngle(start,front,goal)
     mult = 1
     if bot==1:
-        mult = 1.5
+        mult = SLOWBOT
     if np.isnan(angle):
         angle = 0
         print("Angle is NAN")
