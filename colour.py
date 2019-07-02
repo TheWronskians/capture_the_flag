@@ -14,9 +14,12 @@ red = [0.93365103, 0.35130355, 0.28260624] #Light
 #red = [0.83925676, 0.19983858, 0.15198655] #Dark
 white = [1, 1, 1]
 #orange = [0.99148726, 0.5729994, 0.25187913]
-yellow = [0.9834839 , 1, 0.76263994]
+#yellow = [0.9834839 , 1, 0.76263994]
+#yellow = [0.99455225, 0.9999614 , 0.5426788 ] #brighter
+yellow = [0.9834429 , 0.9999806 , 0.62282646]
 green = [0.61612934, 0.90352577, 0.5615079 ]
-blue = [0.501899  , 0.89933634, 0.99078834]
+#blue = [0.501899  , 0.89933634, 0.99078834]
+blue = [0.38518488, 0.8185951 , 0.96491045]
 
 def displayImage(images, nrows = 1, ncols=1, title=[],image_max=0,sizex=15,sizey=8):
     #Handle the case of 1 image
@@ -77,7 +80,8 @@ def drawOnFeed(frame,cs):
     avs = [red,white,blue,yellow,green]
     for i in range(len(avs)):
         if not(np.isnan(cs[i][0]) or np.isnan(cs[i][1])):
-            newCol = (int(avs[i][2]*255),int(avs[i][1]*255),int(avs[i][0]*255)) #Reversed because BGR
+            #newCol = (int(avs[i][2]*255),int(avs[i][1]*255),int(avs[i][0]*255)) #Reversed because BGR
+            newCol = (0,0,0)
             newC = (int(round(cs[i][1])),int(round(cs[i][0]))) #Reversed because image
             cv2.circle(frame,newC,5,newCol,2)
 

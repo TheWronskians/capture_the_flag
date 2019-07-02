@@ -19,9 +19,9 @@ w = 480
 
 directory = "footage/"
 format = ".avi"
-timestamp = time.ctime(time.time()).split(" ")[3].split(":")
+timestamp = time.ctime(time.time()).split(" ")[4].split(":")
 filename = "output-"+timestamp[0]+"-"+timestamp[1]+"-"+timestamp[2]
-print(filename)
+print(timestamp)
 
 fourcc = cv2.VideoWriter_fourcc('M','J','P','G')
 out = cv2.VideoWriter(directory+filename+format, fourcc, 20.0, (int(cap.get(3)),int(cap.get(4))))
@@ -53,7 +53,7 @@ while(True):
     #print(array_values.shape)
     # Display the resulting frame
 
-    timestr = "Time: " + time.ctime(time.time()).split(" ")[3]
+    timestr = "Time: " + time.ctime(time.time()).split(" ")[4]
 
     cv2.putText(frame,timestr, topLeft, font, fontScale,fontColor,lineType)
 
