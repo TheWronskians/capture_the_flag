@@ -194,7 +194,7 @@ if __name__ == "__main__":
 
     directory = "footage/"
     format = ".avi"
-    timestamp = time.ctime(time.time()).split(" ")[4].split(":")
+    timestamp = time.ctime(time.time()).split(" ")[3].split(":")
     filename = "master-"+timestamp[0]+"-"+timestamp[1]+"-"+timestamp[2]
 
     fourcc = cv2.VideoWriter_fourcc('M','J','P','G')
