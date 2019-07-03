@@ -16,7 +16,7 @@ def move():
     while not rospy.is_shutdown():
         # moving forward for at 0.3 speed for 5 seconds
         velocity_msg.linear.x = 0.5
-        time_end = time.time() + 5
+        time_end = time.time() + 10
         while(time.time() < time_end):
             velocity_publisher.publish(velocity_msg)
 
